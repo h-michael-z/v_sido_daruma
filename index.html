@@ -79,6 +79,31 @@
 
         }
 
+        function moveAngleReverse (sid){
+		  /// generate a empty json
+		  var angle = vsido.servoAngle();
+		  var arg = 0;
+		  angle["cycle"] = 1;
+		  /// element in angle["servo"] is a json object of {'sid':number,'angle':-140~140 degree}
+		  while (arg > -30) {
+		  	  arg = arg - 5
+			  angle["servo"].push({
+					"sid":sid,
+					"angle": arg
+			  });
+			  console.log("send:" + JSON.stringify(angle))
+			  
+			  /// show command that sent to Robot. 
+			  vsido.send(angle,function(response) {
+			  	console.log("res:" + JSON.stringify(response))
+				/// show response from Robot.
+			  });
+			  angle["servo"] = [];
+			  wait(500);
+		  }
+
+        }
+
 
 		var s_timer=null;
 		var look_timer=null;
@@ -103,6 +128,12 @@
 			console.log("move")
 		}
 
+		$('#timerbtn').button().on('click',function(event){
+			console.log("たいまー！");
+			wait(2000);
+			look_timer=setInterval(checkLookBack,200);
+		});
+
 		$('#walkingbtn').button().on('click',function(event){
 			console.log("うごけ！");
 			look_timer=setInterval(checkLookBack,200);
@@ -116,12 +147,14 @@
 
 		$('#rightbtn').button().on('click',function(event){
 			console.log("右！");
-			moveAngle(10);
+			moveAngle(4);
+			moveAngleReverse(7);
 		});
 
 		$('#leftbtn').button().on('click',function(event){
 			console.log("左！");
-			moveAngle(16);
+			moveAngle(7);
+			moveAngleReverse(4);
 		});
 		
 
@@ -194,18 +227,19 @@
 </head>
 
 <body>
-
 	<div id="content-div">
+		<button id="timerbtn">タイマー！</button>
+		<div></div>
 		<button id="walkingbtn">あるけ！</button>
 		<div></div>
-		<button id="leftbtn">左！</button>	
+		<button id="leftbtn">左！</button>
 		<button id="rightbtn">右！</button>
 		<div></div>
 		<button id="resetbtn">とまれ！</button>
 		<h2>カメラ出力</h2>
 		<div id="camera-div">
 			<img src="" id="camera_raw">
-		</div>		
+		</div>
 	</div>
 	<div class="spacer"></div>
 	<div id="info-div">
